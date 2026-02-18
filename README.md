@@ -35,6 +35,14 @@ Run tests:
 pnpm test
 ```
 
+Recommended smoke run after each extension change:
+
+```bash
+pnpm run test:smoke
+```
+
+This creates a fresh timed task and timed event, clicks `+1 week`, and verifies a `+7` day shift in headless Chrome.
+
 Optional headed run:
 
 ```bash

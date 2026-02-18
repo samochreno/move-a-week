@@ -7,6 +7,7 @@
     "build:ext": "esbuild src/content.ts --bundle --format=iife --target=chrome114 --outfile=dist/content.js",
     "typecheck": "tsc --noEmit",
     "test:auth": "playwright test tests/bootstrap-auth.spec.ts --headed",
+    "test:smoke": "pnpm run build:ext && playwright test tests/smoke-shift.spec.ts",
     "test": "pnpm run build:ext && playwright test tests/calendar-shift.spec.ts",
     "test:headed": "pnpm run build:ext && playwright test tests/calendar-shift.spec.ts --headed"
   },

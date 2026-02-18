@@ -102,9 +102,10 @@ export async function dismissOverlays(page: Page): Promise<void> {
 
 export async function openItemBySearch(page: Page, title: string): Promise<void> {
   await dismissOverlays(page);
+  const itemSelector = '[role="button"]:visible, [role="link"]:visible, [data-eventid]:visible, [data-key]:visible';
 
   const directItem = page
-    .locator('[role="button"], [role="link"], [data-eventid], [data-key]')
+    .locator(itemSelector)
     .filter({ hasText: title })
     .first();
   if ((await directItem.count()) > 0) {
@@ -149,12 +150,19 @@ export async function openItemBySearch(page: Page, title: string): Promise<void>
   }
 
   const result = page
-    .locator('[role="button"], [role="link"], [data-eventid], [data-key]')
+    .locator(itemSelector)
     .filter({ hasText: title })
     .first();
 
   await expect(result).toBeVisible({ timeout: 15000 });
   await result.click();
+
+  const dialog = page.locator('[role="dialog"]').filter({ hasText: title }).last();
+  const opened = await dialog.isVisible({ timeout: 4000 }).catch(() => false);
+  if (!opened) {
+    await result.click({ timeout: 5000 }).catch(() => undefined);
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+  }
 }
 
 export async function expectShiftButtonVisibleOnce(page: Page): Promise<void> {
