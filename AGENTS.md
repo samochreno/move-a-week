@@ -1,37 +1,49 @@
-# Repository Guidelines
+# Move-A-Week Agent Rules
 
-## Project Structure & Module Organization
+## Scope
 
-- `src/` contains extension source code: `content.ts` (injected behavior), `dom-selectors.ts` (UI selectors/helpers), `date-utils.ts` (date parsing/shift logic), and `styles.css`.
-- `tests/` contains Playwright specs and shared helpers in `tests/fixtures.ts`.
-- `manifest.json` defines the Chrome MV3 extension; `dist/content.js` is the generated bundle.
-- `test-results/` and `dist/` are generated outputs. Do not hand-edit generated files.
+- This repo is a Chrome MV3 extension for `calendar.google.com`.
+- Primary runtime files:
+  - `src/content.ts` for injected behavior.
+  - `src/dom-selectors.ts` for selector strategy.
+  - `src/date-utils.ts` for parsing/shift logic.
+  - `src/styles.css` for injected UI.
+- Test files live in `tests/`. Generated artifacts are `dist/` and `test-results/` (do not hand-edit).
 
-## Build, Test, and Development Commands
+## Non-Negotiable Workflow (Every Change)
 
-- `pnpm install`: install dependencies.
-- `pnpm run build:ext`: bundle `src/content.ts` to `dist/content.js` with esbuild.
-- `pnpm run typecheck`: run TypeScript checks without emitting files.
-- `pnpm run test:auth`: one-time Google Calendar auth bootstrap (headed browser).
-- `pnpm test`: build extension and run main calendar shift regression suite.
-- `pnpm run test:smoke`: quick sanity check for +7 day shift behavior.
-- `pnpm run test:headed`: run the main suite in headed mode for debugging.
+After any code change (extension or tests), run:
 
-## Coding Style & Naming Conventions
+1. `pnpm run build:ext`
+2. `pnpm run test:smoke`
 
-- Language: TypeScript (ES modules), 2-space indentation, semicolons, single quotes.
-- Naming: `camelCase` for functions/variables, `PascalCase` for types/interfaces, `UPPER_SNAKE_CASE` for constants.
-- Keep selector logic centralized in `dom-selectors.ts`; keep date/time transformations in `date-utils.ts`.
-- Prefer small, composable functions and explicit return types for exported APIs.
+Do not treat a change as done unless both pass, or you explicitly report why they could not run.
 
-## Testing Guidelines
+## Playwright Policy
 
-- Framework: `@playwright/test` with specs under `tests/*.spec.ts`.
-- Existing scenarios rely on fixture env vars such as `MAW_TIMED_EVENT_TITLE` and `MAW_TASK_NO_TIME_TITLE`.
-- Keep new tests scenario-driven and name files as `<feature>.spec.ts`.
-- Before opening a PR, run at least `pnpm run typecheck` and `pnpm run test:smoke`; run `pnpm test` for behavior changes.
+- Use Playwright in headless mode by default.
+- Use Chrome channel (`channel: 'chrome'`) for authenticated Calendar runs.
+- `pnpm run test:auth` is the only flow that may intentionally open headed for one-time login handoff.
+- Prefer deterministic tests that create their own fixtures over manual fixture setup.
 
-## Security & Configuration Tips
+## Commands
 
-- Auth state is stored in `tests/.auth/` and is ignored by git; never commit credentials or session artifacts.
-- Rebuild (`pnpm run build:ext`) before loading unpacked extension in Chrome.
+- `pnpm install` - install dependencies.
+- `pnpm run build:ext` - bundle `src/content.ts` to `dist/content.js`.
+- `pnpm run typecheck` - TypeScript type checks.
+- `pnpm run test:smoke` - deterministic task+event +1 week smoke suite.
+- `pnpm test` - broader regression suite.
+- `pnpm run test:auth` - one-time auth bootstrap.
+
+## Coding Conventions
+
+- TypeScript, 2-space indentation, semicolons, single quotes.
+- `camelCase` for values/functions, `PascalCase` for types, `UPPER_SNAKE_CASE` for constants.
+- Keep selectors in `src/dom-selectors.ts`.
+- Keep date math/parsing in `src/date-utils.ts`.
+- Keep `src/content.ts` focused on flow orchestration and DOM actions.
+
+## Security
+
+- Never commit auth/session data from `tests/.auth/`.
+- Never commit secrets.
