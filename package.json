@@ -1,0 +1,19 @@
+{
+  "name": "move-a-week",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:ext": "esbuild src/content.ts --bundle --format=iife --target=chrome114 --outfile=dist/content.js",
+    "typecheck": "tsc --noEmit",
+    "test:auth": "playwright test tests/bootstrap-auth.spec.ts --headed",
+    "test": "pnpm run build:ext && playwright test tests/calendar-shift.spec.ts",
+    "test:headed": "pnpm run build:ext && playwright test tests/calendar-shift.spec.ts --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^22.13.1",
+    "esbuild": "^0.25.1",
+    "typescript": "^5.8.2"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Move A Week",
+  "version": "0.1.0",
+  "description": "Adds a +1 week button to Google Calendar events and tasks.",
+  "host_permissions": [
+    "https://calendar.google.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://calendar.google.com/*"
+      ],
+      "js": [
+        "dist/content.js"
+      ],
+      "css": [
+        "src/styles.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
