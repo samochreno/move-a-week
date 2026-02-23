@@ -303,11 +303,8 @@ async function restoreViewportIfWeekShifted(initialDateKey: number | null): Prom
         return;
       }
 
-      const steps = Math.max(1, Math.min(4, Math.round(diff / 7)));
-      for (let index = 0; index < steps; index += 1) {
-        previousWeekButton.click();
-        await wait(90);
-      }
+      previousWeekButton.click();
+      await wait(90);
       window.removeEventListener('pointerdown', cancel, { capture: true });
       window.removeEventListener('keydown', cancel, { capture: true });
       window.removeEventListener('wheel', cancel, { capture: true });
